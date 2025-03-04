@@ -54,7 +54,7 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
 
   async hardDelete(id: number): Promise<string> {
     const result = await this.repository.deleteEntity(id);
-    if(result.affected && result.affected > 0){
+    if (result.affected && result.affected > 0) {
       return `Entidade com ID ${id} deletada fisicamente.`;
     }
     return `Entidade com ID ${id} não encontrada para exclusão física.`;

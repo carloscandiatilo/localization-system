@@ -1,18 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CategoriaService } from 'src/domain/categoria/service/categoria.service';
 import { Categoria } from 'src/domain/categoria/entity/categoria.entity';
+import { BaseController } from './base.controller';
 
 @Controller('categorias')
-export class CategoriaController {
-  constructor(private readonly categoriaService: CategoriaService) {}
+export class CategoriaController extends BaseController<Categoria> {
+  constructor(private readonly categoriaService: CategoriaService) {
+    super(categoriaService);
+  }
 
-  @Get()
-  async getAllCategorias(): Promise<Categoria[] | string> {
-    return this.categoriaService.getAllCategorias();
-  }
-  
-  @Get(':id')
-  async getCategoriaWithUser(@Param('id') id: number): Promise<Categoria | null> {
-    return this.categoriaService.getCategoriaWithUser(id);
-  }
 }

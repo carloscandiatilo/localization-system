@@ -1,10 +1,13 @@
+import { Injectable } from '@nestjs/common';
 import { CategoriaRepository } from '../repository/categoria.repository';
 import { Categoria } from '../entity/categoria.entity';
-import { Injectable } from '@nestjs/common';
+import { BaseService } from 'src/core/base/service/base.service';
 
 @Injectable()
-export class CategoriaService {
-  constructor(private readonly categoriaRepository: CategoriaRepository) {}
+export class CategoriaService extends BaseService<Categoria> {
+  constructor(private readonly categoriaRepository: CategoriaRepository) {
+    super(categoriaRepository); 
+  }
 
   async getCategoriaWithUser(categoriaId: number): Promise<Categoria | null> {
     return await this.categoriaRepository.findOne({
@@ -13,38 +16,12 @@ export class CategoriaService {
     });
   }
 
-  async getAllCategorias(): Promise<Categoria[] | string> {
-    const categorias = await this.categoriaRepository.findAll();
-    return categorias.length === 0 ? 'Nenhuma categoria encontrada.' : categorias;
-  }
-
-  async getCategoriaById(id: number): Promise<Categoria | null> {
-    return await this.categoriaRepository.findById(id);
-  }
-
-  async createCategoria(data: Partial<Categoria>): Promise<Categoria | string> {
-    return this.categoriaRepository.createEntity(data);
-  }
-
-  async updateCategoria(id: number, data: Partial<Categoria>): Promise<Categoria | string> {
-    const categoriaAtualizada = await this.categoriaRepository.updateEntity(id, data);
-    if (!categoriaAtualizada) {
-      return `Categoria com ID ${id} não encontrada.`;
-    }
-    return categoriaAtualizada;
-  }
-  
-
-  async softDeleteCategoria(id: number): Promise<string> {
-    const result = await this.categoriaRepository.softDelete(id);
-    if (result.affected && result.affected > 0) {
-      return `Categoria com ID ${id} deletada logicamente.`;
-    }
-    return `Categoria com ID ${id} não encontrada para exclusão lógica.`;
-  }
-  
-
   async getCategoriaByName(nome: string): Promise<Categoria | null> {
     return await this.categoriaRepository.findByName(nome);
   }
+
+  async softDeleteCategoria(id: number): Promise<string> {
+    return await this.softDelete(id);
+  }
+  
 }

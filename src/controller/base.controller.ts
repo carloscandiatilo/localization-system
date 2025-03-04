@@ -51,6 +51,14 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     return { message: result };
   }
 
+  @Delete(':id')
+  async hardDelete(@Param('id') id: number) {
+    const result = await this.service.hardDelete(id);
+    if (typeof result === 'string') {
+      throw new NotFoundException(result);
+    }
+    return { message: result };
+  }
   
 
 }

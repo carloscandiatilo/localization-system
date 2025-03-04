@@ -9,13 +9,6 @@ export class CategoriaRepository extends BaseRepository<Categoria> {
     super(Categoria, dataSource);
   }
 
-  // async findCategoriaWithUser(id: number): Promise<Categoria | null> {
-  //   return this.findOne({
-  //     where: { id },
-  //     relations: ['user'],
-  //   });
-  // }
-
   async findByName(nome: string): Promise<Categoria | null> {
     return this.findByCondition({ nome });
   }
