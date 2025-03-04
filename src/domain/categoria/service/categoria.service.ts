@@ -20,7 +20,7 @@ export class CategoriaService extends BaseService<Categoria> {
     return await this.categoriaRepository.findByName(nome);
   }
 
-  async softDeleteCategoria(id: number): Promise<string> {
+  async excluir(id: number): Promise<string> {
     return await this.softDelete(id);
   }
   
