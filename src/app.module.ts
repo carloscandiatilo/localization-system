@@ -5,12 +5,14 @@ import typeormConfig from './config/typeorm.config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { CategoriaModule } from './domain/categoria/categoria.module';
+import { ClienteModule } from './domain/cliente/cliente.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeormConfig),
     UserModule,
-    CategoriaModule
+    CategoriaModule,
+    ClienteModule
   ],
   controllers: [AppController],
   providers: [AppService],
