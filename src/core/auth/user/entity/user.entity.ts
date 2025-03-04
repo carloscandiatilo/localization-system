@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Categoria } from 'src/domain/categoria/entity/categoria.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -13,9 +14,12 @@ export class User {
 
   @Column()
   password: string;
-  
+
   @Column({ default: null })
   roleId: number;
+
+  @OneToMany(() => Categoria, categoria => categoria.user)
+  categorias: Categoria[];
 
   @Column({ default: false })
   isDeleted: boolean;

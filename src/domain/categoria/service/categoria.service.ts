@@ -1,28 +1,25 @@
 import { CategoriaRepository } from '../repository/categoria.repository';
 import { Categoria } from '../entity/categoria.entity';
 import { Injectable } from '@nestjs/common';
-import { BaseService } from 'src/core/base/service/base.service'; 
 
 @Injectable()
-export class CategoriaService extends BaseService<Categoria> {
-  constructor(private readonly categoriaRepository: CategoriaRepository) {
-    super(categoriaRepository);
+export class CategoriaService {
+  constructor(private readonly categoriaRepository: CategoriaRepository) {}
+
+  async getCategoriaWithUser(categoriaId: number): Promise<Categoria | null> {
+    return await this.categoriaRepository.findOne({
+      where: { id: categoriaId },
+      relations: ['user'],
+    });
   }
 
   async getAllCategorias(): Promise<Categoria[] | string> {
     const categorias = await this.categoriaRepository.findAll();
-    if (categorias.length === 0) {
-      return 'Nenhuma categoria encontrada.';
-    }
-    return categorias;
+    return categorias.length === 0 ? 'Nenhuma categoria encontrada.' : categorias;
   }
 
-  async getCategoriaById(id: number): Promise<Categoria | string> {
-    const categoria = await this.categoriaRepository.findById(id);
-    if (!categoria) {
-      return `Categoria com ID ${id} não encontrada.`;
-    }
-    return categoria;
+  async getCategoriaById(id: number): Promise<Categoria | null> {
+    return await this.categoriaRepository.findById(id);
   }
 
   async createCategoria(data: Partial<Categoria>): Promise<Categoria | string> {
@@ -30,19 +27,24 @@ export class CategoriaService extends BaseService<Categoria> {
   }
 
   async updateCategoria(id: number, data: Partial<Categoria>): Promise<Categoria | string> {
-    return await this.update(id, data); 
+    const categoriaAtualizada = await this.categoriaRepository.updateEntity(id, data);
+    if (!categoriaAtualizada) {
+      return `Categoria com ID ${id} não encontrada.`;
+    }
+    return categoriaAtualizada;
   }
+  
 
   async softDeleteCategoria(id: number): Promise<string> {
-    return await this.softDelete(id);
-  }
-
-
-  async getCategoriaByName(nome: string): Promise<Categoria | string> {
-    const categoria = await this.categoriaRepository.findByName(nome);
-    if (!categoria) {
-      return `Categoria com o nome ${nome} não encontrada.`;
+    const result = await this.categoriaRepository.softDelete(id);
+    if (result.affected && result.affected > 0) {
+      return `Categoria com ID ${id} deletada logicamente.`;
     }
-    return categoria;
+    return `Categoria com ID ${id} não encontrada para exclusão lógica.`;
+  }
+  
+
+  async getCategoriaByName(nome: string): Promise<Categoria | null> {
+    return await this.categoriaRepository.findByName(nome);
   }
 }
