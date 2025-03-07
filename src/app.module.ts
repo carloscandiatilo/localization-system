@@ -6,13 +6,18 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { CategoriaModule } from './domain/categoria/categoria.module';
 import { ClienteModule } from './domain/cliente/cliente.module';
+import { ModuleModule } from './domain/module/module.module';
+import { RoleModule } from './domain/role/role.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeormConfig),
     UserModule,
     CategoriaModule,
-    ClienteModule
+    ClienteModule,
+    ModuleModule,
+    RoleModule
+
   ],
   controllers: [AppController],
   providers: [AppService],

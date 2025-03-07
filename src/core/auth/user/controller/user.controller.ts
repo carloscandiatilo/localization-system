@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from 'src/core/auth/auth.service';
-import { UserService } from './service/user.service';
+import { UserService } from '../service/user.service';
 
 @Controller('users')
 export class UserController {
@@ -10,19 +10,29 @@ export class UserController {
   ) {}
 
   @Post('signup')
-  async signup(@Body() body: { username: string; password: string; email: string }) {
+  async signup(@Body() body: { username: string; password: string; email: string; roleId?: number }) {
     try {
       const existingUserByEmail = await this.userService.findByEmail(body.email);
       if (existingUserByEmail) {
         throw new HttpException('Esse e-mail já existe no sistema', HttpStatus.BAD_REQUEST);
       }
-      const user = await this.userService.createUser(body.username, body.password, body.email);
+      
+      const user = await this.userService.createUser(
+        body.username,
+        body.password,
+        body.email,
+        body.roleId ?? 1 
+      );
+      
       
       return {
         id: user.id,
         username: user.username,
       };
     } catch (error) {
+
+      console.log(error);
+      
       throw new HttpException(
         error.response || 'Erro ao criar usuário', 
         error.status || HttpStatus.INTERNAL_SERVER_ERROR
