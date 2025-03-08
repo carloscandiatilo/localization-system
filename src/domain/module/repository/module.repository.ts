@@ -8,6 +8,14 @@ export class ModuleRepository extends BaseRepository<Module> {
   constructor(dataSource: DataSource) {
     super(Module, dataSource);
   }
+
+  async findAllWithSubmodules(): Promise<Module[]> {
+    return this.find({
+      where: { isDeleted: false },
+      relations: ['submodulos'],
+    });
+  }
+  
 }
 
 

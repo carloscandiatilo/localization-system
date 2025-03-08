@@ -33,6 +33,9 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
 
   async update(id: number, data: Partial<T>): Promise<T> {
     const updatedItem = await this.repository.updateEntity(id, data);
+
+    console.log(updatedItem);
+    
     if (!updatedItem) {
       throw new HttpException(`Registro com ID ${id} não encontrado.`, HttpStatus.NOT_FOUND);
     }

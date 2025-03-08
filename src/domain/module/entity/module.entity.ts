@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { Role } from 'src/domain/role/entity/role.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity('modules')
 export class Module {
@@ -12,4 +11,24 @@ export class Module {
   @Column({ default: '' })
   descricao: string;
 
+  @Column({ type: 'boolean', nullable: true, default: false }) 
+  isModulo: boolean | null;
+
+  @Column({ name: 'paiId', nullable: true })
+  paiId?: number | null;
+
+  @ManyToOne(() => Module, (module) => module.submodulos, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'paiId' })
+  pai?: Module | null;
+
+  @OneToMany(() => Module, (module) => module.pai, {
+    cascade: true,
+  })
+  submodulos: Module[];
+
+  @Column({ default: false })
+  isDeleted: boolean;
 }
