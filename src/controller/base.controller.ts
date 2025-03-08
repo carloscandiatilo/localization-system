@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Put, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { BaseService } from 'src/core/base/service/base.service';
 import { NotFoundException } from '@nestjs/common';
 
@@ -69,5 +69,11 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
       throw new NotFoundException(result);
     }
     return { message: result };
+  }
+
+  @Post(':id/restore')
+  @HttpCode(HttpStatus.OK)
+  async restore(@Param('id') id: string) {
+    return await this.service.restore(Number(id));
   }
 }

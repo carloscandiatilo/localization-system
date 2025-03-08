@@ -69,7 +69,7 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
     }
     await this.repository.updateEntity(id, { isDeleted: true } as Partial<T>);
     const nome = entity?.['nome'] ? `'${entity['nome']}'` : `ID ${id}`;
-    return `Registro ${nome} foi excluído provisoriamente.`;
+    return `Registro ${nome} foi excluído com sucesso!`;
   }
 
   async hardDelete(id: number): Promise<string> {
@@ -88,8 +88,11 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
         throw new HttpException(`Registro com ID ${id} não encontrado para restauração.`, HttpStatus.NOT_FOUND);
     }
     await this.repository.update(id, { isDeleted: false } as any);
-    return `Registro com ID ${id} foi restaurado com sucesso.`;
+
+    const nome = entity['nome'] ? `'${entity['nome']}'` : `ID ${id}`;
+    return `Registro ${nome} foi restaurado com sucesso.`;
 }
+
 
 
   private async validarIdsReferenciados(data: Partial<T>): Promise<void> {
