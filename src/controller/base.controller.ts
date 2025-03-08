@@ -10,13 +10,21 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   async findAll(
     @Query('paginador') paginador: string = 'true',
     @Query('page') page: string = '1',
-    @Query('limit') limit: string = '5'
+    @Query('limit') limit: string = '5',
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order: 'asc' | 'desc' = 'asc'
   ) {
     const aplicarPaginacao = paginador !== 'false';
     const pagina = parseInt(page, 10) || 1;
-    const limite = aplicarPaginacao ? parseInt(limit, 10) || 5 : 0  
-    return await this.service.getAll(aplicarPaginacao, pagina, limite);
+    const limite = aplicarPaginacao ? parseInt(limit, 10) || 5 : 0;
+
+    const ordenar = orderBy
+      ? { column: orderBy as keyof T, direction: order }
+      : undefined;
+    return await this.service.getAll(aplicarPaginacao, pagina, limite, ordenar);
   }
+
+  
 
   @Get(':id')
   async findById(@Param('id') id: number) {
