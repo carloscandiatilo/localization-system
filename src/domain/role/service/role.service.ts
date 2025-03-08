@@ -3,14 +3,16 @@ import { RoleRepository } from '../repository/role.repository';
 import { UserRepository } from 'src/core/auth/user/repository/user.repository';
 import { Role } from '../entity/role.entity';
 import { BaseService } from 'src/core/base/service/base.service';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class RoleService extends BaseService<Role> {
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly userRepository: UserRepository,
+    protected readonly dataSource: DataSource  
   ) {
-    super(roleRepository); // Passa o RoleRepository para o BaseService
+    super(roleRepository, dataSource); // Passa o RoleRepository para o BaseService
   }
 
   // Método específico para atribuir uma role a um usuário

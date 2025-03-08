@@ -2,12 +2,15 @@ import { Injectable, ConflictException, NotFoundException, BadRequestException }
 import { ModuleRepository } from '../repository/module.repository';
 import { Module } from '../entity/module.entity';
 import { BaseService } from 'src/core/base/service/base.service';
-import { IsNull } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 
 @Injectable()
 export class ModuleService extends BaseService<Module> {
-  constructor(private readonly moduloRepositorio: ModuleRepository) {
-    super(moduloRepositorio);
+  constructor(
+    private readonly moduloRepositorio: ModuleRepository,
+    protected readonly dataSource: DataSource  
+  ) {
+    super(moduloRepositorio, dataSource);
   }
   
   async carregarTodosModulos(): Promise<Module[]> {

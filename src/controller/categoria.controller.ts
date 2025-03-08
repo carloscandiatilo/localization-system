@@ -8,5 +8,4 @@ export class CategoriaController extends BaseController<Categoria> {
   constructor(private readonly categoriaService: CategoriaService) {
     super(categoriaService);
   }
-
 }

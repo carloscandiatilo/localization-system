@@ -59,6 +59,4 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     }
     return { message: result };
   }
-  
-
 }
