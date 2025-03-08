@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Put, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Delete, Query, HttpCode, HttpStatus} from '@nestjs/common';
 import { BaseService } from 'src/core/base/service/base.service';
 import { NotFoundException } from '@nestjs/common';
 
@@ -8,11 +8,12 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Get()
   async findAll(
+    @Query() query: Record<string, string>,
     @Query('paginador') paginador: string = 'true',
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '5',
     @Query('orderBy') orderBy?: string,
-    @Query('order') order: 'asc' | 'desc' = 'asc'
+    @Query('order') order: 'asc' | 'desc' = 'asc',
   ) {
     const aplicarPaginacao = paginador !== 'false';
     const pagina = parseInt(page, 10) || 1;
@@ -21,10 +22,34 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     const ordenar = orderBy
       ? { column: orderBy as keyof T, direction: order }
       : undefined;
-    return await this.service.getAll(aplicarPaginacao, pagina, limite, ordenar);
-  }
 
-  
+    const { paginador: _, page: __, limit: ___,orderBy: ____, order: _____,...rawFiltros} = query;
+
+    const filtros: Partial<T> = Object.entries(rawFiltros).reduce(
+      (acc, [key, value]) => {
+        if (!isNaN(Number(value))) {
+          acc[key as keyof T] = Number(value) as any;
+        } else if (
+          value.toLowerCase() === 'true' ||
+          value.toLowerCase() === 'false'
+        ) {
+          acc[key as keyof T] = (value.toLowerCase() === 'true') as any;
+        } else {
+          acc[key as keyof T] = value as any;
+        }
+        return acc;
+      },
+      {} as Partial<T>,
+    );
+
+    return await this.service.getAll(
+      aplicarPaginacao,
+      pagina,
+      limite,
+      ordenar,
+      filtros,
+    );
+  }
 
   @Get(':id')
   async findById(@Param('id') id: number) {
@@ -50,7 +75,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     if (typeof result === 'string') {
       throw new NotFoundException(result);
     }
-    return result; 
+    return result;
   }
 
   @Delete(':id')
@@ -62,7 +87,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     return { message: result };
   }
 
-  @Delete(':id')
+  @Delete('hard-delete/:id')
   async hardDelete(@Param('id') id: number) {
     const result = await this.service.hardDelete(id);
     if (typeof result === 'string') {

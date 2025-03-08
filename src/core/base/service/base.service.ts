@@ -12,10 +12,13 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
     paginador = true,
     page = 1,
     limit = 5,
-    orderBy?: { column: keyof T; direction: 'asc' | 'desc' }
+    orderBy?: { column: keyof T; direction: 'asc' | 'desc' },
+    filtros?: Partial<T>
   ) {
+    const where = { isDeleted: false, ...filtros } as FindOptionsWhere<T>;
+    
     const [items, total] = await this.repository.findAndCount({
-      where: { isDeleted: false } as FindOptionsWhere<T>,
+      where,
       take: paginador ? limit : undefined,
       skip: paginador ? (page - 1) * limit : undefined,
       order: orderBy ? { [orderBy.column]: orderBy.direction } as FindOptionsOrder<T> : undefined
@@ -28,6 +31,7 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
       limit: paginador ? limit : undefined,
     };
   }
+  
   
   
 
