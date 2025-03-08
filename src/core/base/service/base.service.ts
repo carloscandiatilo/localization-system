@@ -8,12 +8,30 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
     @Inject(DataSource) protected readonly dataSource: DataSource
   ) {}
 
-  async getAll(): Promise<T[]> {
-    const items = await this.repository.findAll();
-    if (items.length === 0) {
-      throw new HttpException('Nenhum registro encontrado.', HttpStatus.NOT_FOUND);
+  async getAll(paginador = true, page = 1, limit = 5): Promise<{ data: T[]; total: number; page?: number; limit?: number }> {
+    if (paginador) {
+      const [items, total] = await this.repository.findAndCount({
+        where: { isDeleted: false } as FindOptionsWhere<T>,
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+
+      return {
+        data: items,
+        total,
+        page,
+        limit,
+      };
+    } else {
+      const items = await this.repository.find({
+        where: { isDeleted: false } as FindOptionsWhere<T>,
+      });
+
+      return {
+        data: items,
+        total: items.length,
+      };
     }
-    return items;
   }
 
   async getById(id: number): Promise<T> {
@@ -71,7 +89,7 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
       return `Registo ${nome} foi excluído definitivamente.`;
     }
   
-    throw new HttpException(`Entidade com ID ${id} não encontrada para exclusão física.`, HttpStatus.NOT_FOUND);
+    throw new HttpException(`Registo com id ${id} não encontrada para exclusão definitiva.`, HttpStatus.NOT_FOUND);
   }
 
   private async validarIdsReferenciados(data: Partial<T>): Promise<void> {
@@ -100,13 +118,9 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
         const existe = await repository.findOne({ where: { id, isDeleted: false } });
   
         if (!existe) {
-          throw new BadRequestException(`O(A) ${entidadeNome} com ID ${id} não existe.`);
+          throw new BadRequestException(`O ${entidadeNome} com id ${id} não existe.`);
         }
       }
     }
   }
-  
-  
-  
-  
 }

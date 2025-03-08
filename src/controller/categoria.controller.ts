@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CategoriaService } from 'src/domain/categoria/service/categoria.service';
 import { Categoria } from 'src/domain/categoria/entity/categoria.entity';
 import { BaseController } from './base.controller';

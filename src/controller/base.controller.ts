@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Delete, Query } from '@nestjs/common';
 import { BaseService } from 'src/core/base/service/base.service';
 import { NotFoundException } from '@nestjs/common';
 
@@ -7,12 +7,15 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   constructor(private readonly service: BaseService<T>) {}
 
   @Get()
-  async findAll() {
-    const result = await this.service.getAll();
-    if (typeof result === 'string') {
-      throw new NotFoundException(result); 
-    }
-    return result;
+  async findAll(
+    @Query('paginador') paginador: string = 'true',
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '5'
+  ) {
+    const aplicarPaginacao = paginador !== 'false';
+    const pagina = parseInt(page, 10) || 1;
+    const limite = aplicarPaginacao ? parseInt(limit, 10) || 5 : 0  
+    return await this.service.getAll(aplicarPaginacao, pagina, limite);
   }
 
   @Get(':id')
