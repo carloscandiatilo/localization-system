@@ -13,10 +13,21 @@ export class CategoriaService extends BaseService<Categoria> {
     super(categoriaRepository, dataSource); 
   }
 
+  async createCategoria(body: { nome: string; descricao?: string }, userId: number): Promise<Categoria> {
+    const categoria = this.categoriaRepository.create({
+      nome: body.nome,
+      descricao: body.descricao,
+      createdBy: userId,
+      updatedBy: userId 
+    });
+
+    return await this.categoriaRepository.save(categoria);
+  }
+
   async getCategoriaWithUser(categoriaId: number): Promise<Categoria | null> {
     const categoria = await this.categoriaRepository.findOne({
       where: { id: categoriaId, isDeleted: false },
-      relations: ['user'],
+      relations: ['criadoPor', 'atualizadoPor'], 
     });
 
     if (!categoria) {
@@ -28,8 +39,7 @@ export class CategoriaService extends BaseService<Categoria> {
       throw new BadRequestException(`Categoria com ${nome} não encontrada.`);
     }
     return categoria;
-}
-
+  }
 
   async getCategoriaByName(nome: string): Promise<Categoria | null> {
     const categoria = await this.categoriaRepository.findByName(nome);

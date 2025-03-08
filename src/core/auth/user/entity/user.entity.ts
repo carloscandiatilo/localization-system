@@ -27,7 +27,7 @@ export class User {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => Categoria, (categoria) => categoria.user)
+  @OneToMany(() => Categoria, (categoria) => categoria.criadoPor)
   categorias: Categoria[];
 
   @OneToMany(() => Cliente, (cliente) => cliente.user)
