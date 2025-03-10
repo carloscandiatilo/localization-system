@@ -1,5 +1,8 @@
 import { User } from 'src/core/auth/user/entity/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { 
+  Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, 
+  CreateDateColumn, UpdateDateColumn 
+} from 'typeorm';
 
 @Entity('criancas')
 export class Crianca {
@@ -9,29 +12,29 @@ export class Crianca {
   @Column()
   nome: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })  // Ajuste para aceitar descrição opcional
   descricao: string;
 
   @Column({ default: false })
   isDeleted: boolean;
 
   @Column({ nullable: true })
-  createdBy: number;
+  createdBy: number;  // Armazena o ID do usuário que criou
 
   @Column({ nullable: true })
-  updatedBy: number;
+  updatedBy: number;  // Armazena o ID do usuário que atualizou
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date;  // Preenchido automaticamente pelo TypeORM
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date;  // Preenchido automaticamente pelo TypeORM
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, eager: true })  // Carrega o usuário criador automaticamente
   @JoinColumn({ name: 'createdBy' })
-  criadoPor: User;
+  criadoPor: User;  // Relacionamento com o usuário criador
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, eager: true })  // Carrega o usuário atualizador automaticamente
   @JoinColumn({ name: 'updatedBy' })
-  atualizadoPor: User;
+  atualizadoPor: User;  // Relacionamento com o usuário atualizador
 }

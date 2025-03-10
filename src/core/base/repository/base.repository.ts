@@ -13,9 +13,10 @@ export class BaseRepository<T extends ObjectLiteral & { id: number; isDeleted?: 
   async findById(id: number): Promise<T | null> {
     return await this.findOneBy({ id, isDeleted: false } as FindOptionsWhere<T>);
   }
-
+  
   async findByCondition(condition: FindOptionsWhere<T>): Promise<T | null> {
-    return await this.findOneBy(condition);
+    const result = await this.findOne({ where: condition });
+    return result || null;
   }
 
   async createEntity(data: Partial<T>): Promise<T> {

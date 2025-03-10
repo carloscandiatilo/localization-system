@@ -5,14 +5,14 @@ export class Audit {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   userId: number;
 
   @Column()
   action: string;
 
   @Column({ type: 'text', nullable: true })
-  details: string;
+  details: string | null;   // ✅ Permitir null explicitamente
 
   @CreateDateColumn()
   timestamp: Date;
