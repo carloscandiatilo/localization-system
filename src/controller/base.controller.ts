@@ -21,7 +21,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     @Query('orderBy') orderBy?: string,
     @Query('order') order: 'asc' | 'desc' = 'asc',
   ) {
-    this.logger.log('Requisição para listar todos os registros.');
+    //this.logger.log('Requisição para listar todos os registros.');
     const aplicarPaginacao = paginador !== 'false';
     const pagina = parseInt(page, 10) || 1;
     const limite = aplicarPaginacao ? parseInt(limit, 10) || 5 : 0;
@@ -54,7 +54,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Get(':id')
   async findById(@Param('id') id: number) {
-    this.logger.log(`Buscando registro com ID: ${id}`);
+    //this.logger.log(`Buscando registro com ID: ${id}`);
     const result = await this.service.getById(id);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
@@ -64,7 +64,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Post()
   async create(@Body() data: Partial<T>) {
-    this.logger.log('Criando um novo registro.');
+    //this.logger.log('Criando um novo registro.');
     const result = await this.service.create(data);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
@@ -74,7 +74,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Put(':id')
   async update(@Param('id') id: number, @Body() data: Partial<T>) {
-    this.logger.log(`Atualizando registro com ID: ${id}`);
+    //this.logger.log(`Atualizando registro com ID: ${id}`);
     const result = await this.service.update(id, data);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
@@ -84,7 +84,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Delete(':id')
   async delete(@Param('id') id: number) {
-    this.logger.log(`Soft delete no registro com ID: ${id}`);
+    //this.logger.log(`Soft delete no registro com ID: ${id}`);
     const result = await this.service.softDelete(id);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
@@ -94,7 +94,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Delete('hard-delete/:id')
   async hardDelete(@Param('id') id: number) {
-    this.logger.log(`Hard delete no registro com ID: ${id}`);
+    //this.logger.log(`Hard delete no registro com ID: ${id}`);
     const result = await this.service.hardDelete(id);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
@@ -105,7 +105,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   @Post(':id/restore')
   @HttpCode(HttpStatus.OK)
   async restore(@Param('id') id: string) {
-    this.logger.log(`Restaurando registro com ID: ${id}`);
+    //this.logger.log(`Restaurando registro com ID: ${id}`);
     return await this.service.restore(Number(id));
   }
 }

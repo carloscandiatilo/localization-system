@@ -1,8 +1,8 @@
 import { User } from 'src/core/auth/user/entity/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('categorias')
-export class Categoria {
+@Entity('criancas')
+export class Crianca {
   @PrimaryGeneratedColumn()
   id: number;
 
