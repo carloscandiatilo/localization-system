@@ -11,4 +11,6 @@ export const ValidationMessages = {
   PROFILE_UPDATE_REQUIRED: 'Você precisa atualizar seu perfil para teres acesso a tua conta!',
   SIGNUP_SUCCESS: 'Cadastro realizado com sucesso!',
   EMAIL_ALREADY_EXISTS: 'Esse e-mail já existe no sistema.',
+  USER_FETCH_ERROR: 'Erro ao buscar usuário com role.',
+  PASSWORD_HASH_ERROR: 'Erro ao gerar hash da senha.',
 };

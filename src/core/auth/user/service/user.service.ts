@@ -22,28 +22,32 @@ export class UserService {
 
     const existingUserByEmail = await this.findByEmail(email);
     if (existingUserByEmail) {
-      throw new HttpException('E-mail já está em uso', HttpStatus.BAD_REQUEST);
+      throw new HttpException(ValidationMessages.EMAIL_IN_USE, HttpStatus.BAD_REQUEST);
     }
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    try {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = this.userRepository.create({
-      name,
-      username,
-      password: hashedPassword,
-      email,
-      role: roleId ? await this.roleService.getById(roleId) : null,
-    });
+      const user = this.userRepository.create({
+        name,
+        username,
+        password: hashedPassword,
+        email,
+        role: roleId ? await this.roleService.getById(roleId) : null,
+      });
 
-    const errors = await validate(user);
-    if (errors.length > 0) {
-      const errorMessages = errors.map(error => Object.values(error.constraints || {}).join(', ')).join('; ');
-      throw new HttpException(`Erro de validação: ${errorMessages}`, HttpStatus.BAD_REQUEST);
+      const errors = await validate(user);
+      if (errors.length > 0) {
+        const errorMessages = errors.map(error => Object.values(error.constraints || {}).join(', ')).join('; ');
+        throw new HttpException(`${ValidationMessages.VALIDATION_ERROR} ${errorMessages}`, HttpStatus.BAD_REQUEST);
+      }
+
+      return await this.userRepository.save(user);
+    } catch (error) {
+      throw new HttpException(ValidationMessages.PASSWORD_HASH_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    return await this.userRepository.save(user);
-}
+  }
 
   async updateUser(id: number, body: { username?: string; email?: string; password?: string; roleId?: number }): Promise<User> {
     const user = await this.userRepository.findUserWithRole(id);
@@ -55,8 +59,12 @@ export class UserService {
     if (body.email) user.email = body.email;
 
     if (body.password) {
-      const salt = await bcrypt.genSalt();
-      user.password = await bcrypt.hash(body.password, salt);
+      try {
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(body.password, salt);
+      } catch (error) {
+        throw new HttpException(ValidationMessages.PASSWORD_HASH_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
 
     if (body.roleId) {

@@ -1,7 +1,8 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { BaseRepository } from 'src/core/base/repository/base.repository';
+import { ValidationMessages } from 'src/shared/messages/validation-messages';
 
 @Injectable()
 export class UserRepository extends BaseRepository<User> {
@@ -25,13 +26,13 @@ export class UserRepository extends BaseRepository<User> {
       });
 
       if (!user) {
-        throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+        throw new HttpException(ValidationMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
       }
 
       return user;
     } catch (error) {
       throw new HttpException(
-        error.message || 'Erro ao buscar usuário com role',
+        error.message || ValidationMessages.USER_FETCH_ERROR,
         error.status || HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
