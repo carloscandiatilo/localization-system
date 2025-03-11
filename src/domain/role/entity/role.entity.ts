@@ -1,6 +1,5 @@
-import Module from 'module';
 import { User } from 'src/core/auth/user/entity/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('roles')
 export class Role {
@@ -16,7 +15,6 @@ export class Role {
   @OneToMany(() => User, user => user.role)
   users: User[];
 
-  @Column({ default: false })
+  @Column({ name: 'is_deleted', default: false })
   isDeleted: boolean;
- 
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {  Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('modules')
 export class Module {
@@ -31,4 +31,16 @@ export class Module {
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @Column({ nullable: true })
+  createdBy?: number;
+
+  @Column({ nullable: true })
+  updatedBy?: number;
+
+  @CreateDateColumn({ type: 'timestamp', precision: 6 })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', precision: 6 })
+  updatedAt: Date;
 }

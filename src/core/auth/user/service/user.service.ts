@@ -2,7 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entity/user.entity';
 import { UserRepository } from '../repository/user.repository';
-import { RoleService } from 'src/domain/role/service/role.service'; 
+import { RoleService } from 'src/domain/role/service/role.service';
+import { validate } from 'class-validator';
+import { ValidationMessages } from 'src/shared/messages/validation-messages';
 
 @Injectable()
 export class UserService {
@@ -15,35 +17,69 @@ export class UserService {
     return this.userRepository.findAll();
   }
 
-  async createUser(username: string, password: string, email: string, roleId: number): Promise<User> {
-    // Verificar se o e-mail já existe
+  async createUser(userData: { name: string; username: string; password: string; email: string; roleId?: number | null }): Promise<User> {
+    const { name, username, password, email, roleId } = userData;
+
     const existingUserByEmail = await this.findByEmail(email);
     if (existingUserByEmail) {
-      throw new HttpException('E-mail já está em uso', HttpStatus.BAD_REQUEST);
+      throw new HttpException(ValidationMessages.EMAIL_IN_USE, HttpStatus.BAD_REQUEST);
     }
 
-    // Validar se o roleId foi passado corretamente
-    if (!roleId) {
-      throw new HttpException('RoleId é obrigatório', HttpStatus.BAD_REQUEST);
+    try {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const user = this.userRepository.create({
+        name,
+        username,
+        password: hashedPassword,
+        email,
+        role: roleId ? await this.roleService.getById(roleId) : null,
+      });
+
+      const errors = await validate(user);
+      if (errors.length > 0) {
+        const errorMessages = errors.map(error => Object.values(error.constraints || {}).join(', ')).join('; ');
+        throw new HttpException(`${ValidationMessages.VALIDATION_ERROR} ${errorMessages}`, HttpStatus.BAD_REQUEST);
+      }
+
+      return await this.userRepository.save(user);
+    } catch (error) {
+      throw new HttpException(ValidationMessages.PASSWORD_HASH_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async updateUser(id: number, body: { username?: string; email?: string; password?: string; roleId?: number }): Promise<User> {
+    const user = await this.userRepository.findUserWithRole(id);
+    if (!user) {
+      throw new HttpException(ValidationMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    // Verificar se a role existe
-    const role = await this.roleService.getById(roleId);
-    if (!role) {
-      throw new HttpException('Role inválida', HttpStatus.BAD_REQUEST);
+    if (body.username) user.username = body.username;
+    if (body.email) user.email = body.email;
+
+    if (body.password) {
+      try {
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(body.password, salt);
+      } catch (error) {
+        throw new HttpException(ValidationMessages.PASSWORD_HASH_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
 
-    // Hash da senha
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    if (body.roleId) {
+      const role = await this.roleService.getById(body.roleId);
+      if (!role) {
+        throw new HttpException(ValidationMessages.ROLE_INVALID, HttpStatus.BAD_REQUEST);
+      }
+      user.role = role;
+    }
 
-    // Criar usuário
-    const user = this.userRepository.create({
-      username,
-      password: hashedPassword,
-      email,
-      role,
-    });
+    const errors = await validate(user);
+    if (errors.length > 0) {
+      const errorMessages = errors.map(error => Object.values(error.constraints || {}).join(', ')).join('; ');
+      throw new HttpException(`${ValidationMessages.VALIDATION_ERROR} ${errorMessages}`, HttpStatus.BAD_REQUEST);
+    }
 
     return await this.userRepository.save(user);
   }

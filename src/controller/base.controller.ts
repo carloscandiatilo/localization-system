@@ -1,10 +1,8 @@
-import { 
-  Controller, Get, Post, Param, Body, Put, Delete, Query, 
-  HttpCode, HttpStatus, UseGuards, Logger, NotFoundException 
-} from '@nestjs/common';
+import {Controller, Get, Post, Param, Body, Put, Delete, Query, HttpCode, HttpStatus, UseGuards, Logger, NotFoundException, Request, UseInterceptors, Req, UnauthorizedException} from '@nestjs/common';
 import { BaseService } from 'src/core/base/service/base.service';
 import { JwtAuthGuard } from 'src/core/auth/guard/jwt-auth.guard';
-
+import { UserInterceptor } from 'src/core/auth/user/interceptor/user.interceptor';
+@UseInterceptors(UserInterceptor)
 @Controller('base')
 @UseGuards(JwtAuthGuard)
 export class BaseController<T extends { id: number; isDeleted?: boolean }> {
@@ -21,16 +19,13 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
     @Query('orderBy') orderBy?: string,
     @Query('order') order: 'asc' | 'desc' = 'asc',
   ) {
-    this.logger.log('Requisição para listar todos os registros.');
     const aplicarPaginacao = paginador !== 'false';
     const pagina = parseInt(page, 10) || 1;
     const limite = aplicarPaginacao ? parseInt(limit, 10) || 5 : 0;
 
-    const ordenar = orderBy
-      ? { column: orderBy as keyof T, direction: order }
-      : undefined;
+    const ordenar = orderBy? { column: orderBy as keyof T, direction: order }: undefined;
 
-    const { paginador: _, page: __, limit: ___, orderBy: ____, order: _____, ...rawFiltros } = query;
+    const {paginador: _, page: __, limit: ___, orderBy: ____, order: _____, ...rawFiltros} = query;
 
     const filtros: Partial<T> = Object.entries(rawFiltros).reduce(
       (acc, [key, value]) => {
@@ -49,12 +44,11 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
       {} as Partial<T>,
     );
 
-    return await this.service.getAll(aplicarPaginacao, pagina, limite, ordenar, filtros);
+    return await this.service.getAll( aplicarPaginacao, pagina, limite, ordenar, filtros);
   }
 
   @Get(':id')
   async findById(@Param('id') id: number) {
-    this.logger.log(`Buscando registro com ID: ${id}`);
     const result = await this.service.getById(id);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
@@ -63,19 +57,17 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   }
 
   @Post()
-  async create(@Body() data: Partial<T>) {
-    this.logger.log('Criando um novo registro.');
-    const result = await this.service.create(data);
-    if (typeof result === 'string') {
-      throw new NotFoundException(result);
-    }
-    return result;
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() data: Partial<T>, @Request() req) {
+    const userId = req.user?.userId;
+    if (!userId) throw new Error('Usuário não autenticado!');
+    return this.service.create(data, userId);
   }
-
+  
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data: Partial<T>) {
-    this.logger.log(`Atualizando registro com ID: ${id}`);
-    const result = await this.service.update(id, data);
+  async update(@Param('id') id: number, @Body() data: Partial<T>, @Request() req) {
+    const userId = req.user.userId;
+    const result = await this.service.update(id, data, userId);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
     }
@@ -83,9 +75,13 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
-    this.logger.log(`Soft delete no registro com ID: ${id}`);
-    const result = await this.service.softDelete(id);
+  async delete(@Param('id') id: number, @Req() req: any) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Usuário não autenticado.');
+    }
+
+    const result = await this.service.softDelete(id, userId);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
     }
@@ -93,9 +89,13 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   }
 
   @Delete('hard-delete/:id')
-  async hardDelete(@Param('id') id: number) {
-    this.logger.log(`Hard delete no registro com ID: ${id}`);
-    const result = await this.service.hardDelete(id);
+  async hardDelete(@Param('id') id: number, @Req() req: any) {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Usuário não autenticado.');
+    }
+
+    const result = await this.service.hardDelete(id, userId);
     if (typeof result === 'string') {
       throw new NotFoundException(result);
     }
@@ -104,8 +104,8 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Post(':id/restore')
   @HttpCode(HttpStatus.OK)
-  async restore(@Param('id') id: string) {
-    this.logger.log(`Restaurando registro com ID: ${id}`);
-    return await this.service.restore(Number(id));
+  async restore(@Param('id') id: string, @Request() req) {
+    const userId = req.user.userId;
+    return await this.service.restore(Number(id), userId);
   }
 }

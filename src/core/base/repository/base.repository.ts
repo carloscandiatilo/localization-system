@@ -1,7 +1,7 @@
 import { Repository, EntityTarget, DataSource, ObjectLiteral, FindOptionsWhere, DeleteResult } from 'typeorm';
 
 
-export class BaseRepository<T extends ObjectLiteral & { id: number; isDeleted?: boolean }> extends Repository<T> {
+export class BaseRepository<T extends ObjectLiteral & { id: number; nome?: string; isDeleted?: boolean }> extends Repository<T> {
   constructor(entity: EntityTarget<T>, dataSource: DataSource) {
     super(entity, dataSource.createEntityManager());
   }
@@ -13,9 +13,10 @@ export class BaseRepository<T extends ObjectLiteral & { id: number; isDeleted?: 
   async findById(id: number): Promise<T | null> {
     return await this.findOneBy({ id, isDeleted: false } as FindOptionsWhere<T>);
   }
-
+  
   async findByCondition(condition: FindOptionsWhere<T>): Promise<T | null> {
-    return await this.findOneBy(condition);
+    const result = await this.findOne({ where: condition });
+    return result || null;
   }
 
   async createEntity(data: Partial<T>): Promise<T> {

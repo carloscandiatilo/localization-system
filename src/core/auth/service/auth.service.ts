@@ -19,10 +19,8 @@ export class AuthService {
   }
 
   async generateToken(user: any): Promise<string> {
-    const payload = { username: user.username, sub: user.id };
-
+    const payload = { username: user.username, sub: user.id, roleId: user.roleId };
     await this.auditService.log(user.id, 'login', `Usuário ${user.username} logou com sucesso!`);
-
     return this.jwtService.sign(payload);
   }
 }

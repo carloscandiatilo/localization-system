@@ -1,12 +1,12 @@
 import { DataSource } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from 'src/core/base/repository/base.repository';
-import { Cliente } from '../entity/cliente.entity';
+import { Provincia } from '../entity/provincia.entity';
 
 @Injectable()
-export class ClienteRepository extends BaseRepository<Cliente> {
+export class ProvinciaRepository extends BaseRepository<Provincia> {
   constructor(dataSource: DataSource) {
-    super(Cliente, dataSource);
+    super(Provincia, dataSource);
   }
 }
 

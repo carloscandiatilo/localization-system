@@ -3,14 +3,16 @@ import { ModuleRepository } from '../repository/module.repository';
 import { Module } from '../entity/module.entity';
 import { BaseService } from 'src/core/base/service/base.service';
 import { DataSource, IsNull } from 'typeorm';
+import { AuditService } from 'src/domain/audit/service/audit.service';
 
 @Injectable()
 export class ModuleService extends BaseService<Module> {
   constructor(
     private readonly moduloRepositorio: ModuleRepository,
+    protected readonly auditService: AuditService,
     protected readonly dataSource: DataSource  
   ) {
-    super(moduloRepositorio, dataSource);
+    super(moduloRepositorio,auditService, dataSource);
   }
   
   async carregarTodosModulos(): Promise<Module[]> {

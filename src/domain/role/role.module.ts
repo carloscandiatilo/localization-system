@@ -6,11 +6,12 @@ import { RoleService } from './service/role.service';
 import { RoleRepository } from './repository/role.repository';
 import { Role } from './entity/role.entity';
 import { RoleController } from 'src/controller/role.controller';
+import { AuditModule } from '../audit/audit.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Role]),
-    forwardRef(() => UserModule),
+    forwardRef(() => UserModule),AuditModule
   ],
   providers: [RoleService, RoleRepository],
   exports: [RoleService],

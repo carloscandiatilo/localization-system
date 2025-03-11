@@ -1,14 +1,7 @@
-import { Categoria } from 'src/domain/categoria/entity/categoria.entity';
-import { Cliente } from 'src/domain/cliente/entity/cliente.entity';
+import { IsEmail, MinLength } from 'class-validator';
 import { Role } from 'src/domain/role/entity/role.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { ValidationMessages } from 'src/shared/messages/validation-messages';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -16,24 +9,27 @@ export class User {
   id: number;
 
   @Column()
+  name: string;
+
+  @Column()
   username: string;
 
   @Column()
+  @IsEmail({}, { message: ValidationMessages.EMAIL_INVALID })
   email: string;
 
+  @MinLength(6, { message: ValidationMessages.PASSWORD_MIN_LENGTH })
   @Column()
   password: string;
 
-  @Column({ default: false })
+  @Column({ name: 'is_deleted', default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => Categoria, (categoria) => categoria.criadoPor)
-  categorias: Categoria[];
-
-  @OneToMany(() => Cliente, (cliente) => cliente.user)
-  clientes: Cliente[];
-
   @ManyToOne(() => Role, (role) => role.users, { eager: true })
-  @JoinColumn({ name: 'roleId' })
-  role: Role;
+  @JoinColumn({ name: 'role_id' })
+  role: Role | null;
+
+  get roleName(): string {
+    return this.role ? this.role.nome : this.username;
+  }
 }
