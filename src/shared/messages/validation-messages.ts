@@ -16,6 +16,10 @@ export const ValidationMessages = {
   PASSWORD_HASH_ERROR: 'Erro ao gerar hash da senha.',
   DUPLICATE_RECORD: 'Este Registo já existe no sistema. Por favor, diferencie-o!',
   RECORD_NOT_FOUND: 'Registo não encontrado.',
+  RECORD_FOUND: 'Registo encontrado.',
+  LIST_RETURNED_SUCCESSFULLY: 'Lista retornada com sucesso.',
+  RECORD_UPDATED_SUCCESSFULLY: 'Registo atualizado com sucesso.',
+  RECORD_CREATED_SUCCESSFULLY: 'Registo criado com sucesso.',
   RECORD_SOFT_DELETED: 'Este Registo já foi excluído.',
   RECORD_SOFT_DELETE_SUCCESS: 'Registo excluído com sucesso!',
   RECORD_HARD_DELETE_SUCCESS: 'Registo excluído permanentemente.',
@@ -29,5 +33,6 @@ export const ValidationMessages = {
   ROLE_ASSIGNED: 'Role ${role.nome} atribuída ao usuário ${user.username}',
   RECORD_HARD_DELETE_SUCCESS_WITH_NAME: 'Registo com {nome} excluído permanentemente.',
   CANNOT_CHANGE_PROFILE: 'Você não pode editar outro usuário!',
-  USER_CHANGED_SUCCESSFULLY: 'Usuário atualizado com sucesso!'
+  USER_CHANGED_SUCCESSFULLY: 'Usuário atualizado com sucesso!',
+  USER_NOT_AUTHENTICATED: 'Usuário não autenticado.'
 };
