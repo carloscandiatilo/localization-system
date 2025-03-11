@@ -122,4 +122,7 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
     return ValidationMessages.RECORD_RESTORE_SUCCESS;
   }
 
+  async findAndCount(filter: any) {
+    return this.repository.findAndCount(filter);
+  }
 }

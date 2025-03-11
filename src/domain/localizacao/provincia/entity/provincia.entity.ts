@@ -26,11 +26,4 @@ export class Provincia {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // @ManyToOne(() => User, { nullable: true, eager: true })
-  // @JoinColumn({ name: 'createdBy' })
-  // // criadoPor: User;
-  
-  // @ManyToOne(() => User, { nullable: true, eager: true })
-  // @JoinColumn({ name: 'updatedBy' })
-  // atualizadoPor: User;
 }
