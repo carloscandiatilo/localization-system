@@ -5,6 +5,7 @@ import { BaseService } from 'src/core/base/service/base.service';
 import { JwtAuthGuard } from 'src/core/auth/guard/jwt-auth.guard';
 import { UserInterceptor } from 'src/core/auth/user/interceptor/user.interceptor';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ValidationMessages } from 'src/shared/messages/validation-messages';
 
 @ApiTags('Base')
 @ApiBearerAuth()
@@ -18,7 +19,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Get()
   @ApiOperation({ summary: 'Lista todos os registros' })
-  @ApiResponse({ status: 200, description: 'Lista retornada com sucesso.' })
+  @ApiResponse({ status: 200, description: ValidationMessages.LIST_RETURNED_SUCCESSFULLY })
   async findAll(
     @Query() query: Record<string, string>,
     @Query('paginador') paginador: string = 'true',
@@ -50,8 +51,8 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
 
   @Get(':id')
   @ApiOperation({ summary: 'Busca um registro pelo ID' })
-  @ApiResponse({ status: 200, description: 'Registro encontrado.' })
-  @ApiResponse({ status: 404, description: 'Registro não encontrado.' })
+  @ApiResponse({ status: 200, description: ValidationMessages.RECORD_FOUND })
+  @ApiResponse({ status: 404, description: ValidationMessages.RECORD_NOT_FOUND })
   async findById(@Param('id') id: number) {
     const result = await this.service.getById(id);
     if (typeof result === 'string') {
@@ -63,17 +64,17 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Cria um novo registro' })
-  @ApiResponse({ status: 201, description: 'Registro criado com sucesso.' })
+  @ApiResponse({ status: 201, description: ValidationMessages.RECORD_CREATED_SUCCESSFULLY })
   async create(@Body() data: Partial<T>, @Request() req) {
     const userId = req.user?.userId;
-    if (!userId) throw new Error('Usuário não autenticado!');
+    if (!userId) throw new Error(ValidationMessages.USER_NOT_AUTHENTICATED);
     return this.service.create(data, userId);
   }
   
   @Put(':id')
   @ApiOperation({ summary: 'Atualiza um registro' })
-  @ApiResponse({ status: 200, description: 'Registro atualizado com sucesso.' })
-  @ApiResponse({ status: 404, description: 'Registro não encontrado.' })
+  @ApiResponse({ status: 200, description: ValidationMessages.RECORD_UPDATED_SUCCESSFULLY })
+  @ApiResponse({ status: 404, description: ValidationMessages.RECORD_NOT_FOUND })
   async update(@Param('id') id: number, @Body() data: Partial<T>, @Request() req) {
     const userId = req.user.userId;
     const result = await this.service.update(id, data, userId);
@@ -88,7 +89,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   async delete(@Param('id') id: number, @Req() req: any) {
     const userId = req.user?.userId;
     if (!userId) {
-      throw new UnauthorizedException('Usuário não autenticado.');
+      throw new UnauthorizedException(ValidationMessages.USER_NOT_AUTHENTICATED);
     }
 
     const result = await this.service.softDelete(id, userId);
@@ -103,7 +104,7 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   async hardDelete(@Param('id') id: number, @Req() req: any) {
     const userId = req.user?.userId;
     if (!userId) {
-      throw new UnauthorizedException('Usuário não autenticado.');
+      throw new UnauthorizedException(ValidationMessages.USER_NOT_AUTHENTICATED);
     }
 
     const result = await this.service.hardDelete(id, userId);
