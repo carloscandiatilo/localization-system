@@ -41,25 +41,6 @@ Este projeto é um sistema de localização de serviços desenvolvido com o fram
   ```bash
   npm run start:prod
   ```
-
-## Testes
-
-- **Testes Unitários:**
-  ```bash
-  npm run test
-  ```
-
-- **Testes com Observação:**
-  ```bash
-  npm run test:watch
-  ```
-
-- **Testes de Cobertura:**
-  ```bash
-  npm run test:cov
-  ```
-
-
   - **Teste no Swagger:**
   ```http://localhost:3000/api/docs
   ```
