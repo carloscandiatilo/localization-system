@@ -62,7 +62,6 @@ export class BaseTest<T extends { id: number; isDeleted?: boolean }, S extends B
   }
 }
 
-// Testando se a BaseTest funciona corretamente
 describe('BaseTest', () => {
   class MockEntity {
     id: number;
