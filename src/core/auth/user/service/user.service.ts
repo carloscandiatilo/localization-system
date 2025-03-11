@@ -1,10 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entity/user.entity';
 import { UserRepository } from '../repository/user.repository';
 import { RoleService } from 'src/domain/role/service/role.service';
 import { validate } from 'class-validator';
 import { ValidationMessages } from 'src/shared/messages/validation-messages';
+import { UpdateUserDto } from '../../dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -49,38 +50,14 @@ export class UserService {
     }
   }
 
-  async updateUser(id: number, body: { username?: string; email?: string; password?: string; roleId?: number }): Promise<User> {
-    const user = await this.userRepository.findUserWithRole(id);
+  async updateUser(id: number, data: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
     if (!user) {
-      throw new HttpException(ValidationMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new NotFoundException('Usuário não encontrado.');
     }
 
-    if (body.username) user.username = body.username;
-    if (body.email) user.email = body.email;
-
-    if (body.password) {
-      try {
-        const salt = await bcrypt.genSalt();
-        user.password = await bcrypt.hash(body.password, salt);
-      } catch (error) {
-        throw new HttpException(ValidationMessages.PASSWORD_HASH_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    }
-
-    if (body.roleId) {
-      const role = await this.roleService.getById(body.roleId);
-      if (!role) {
-        throw new HttpException(ValidationMessages.ROLE_INVALID, HttpStatus.BAD_REQUEST);
-      }
-      user.role = role;
-    }
-
-    const errors = await validate(user);
-    if (errors.length > 0) {
-      const errorMessages = errors.map(error => Object.values(error.constraints || {}).join(', ')).join('; ');
-      throw new HttpException(`${ValidationMessages.VALIDATION_ERROR} ${errorMessages}`, HttpStatus.BAD_REQUEST);
-    }
-
+    Object.assign(user, data);
     return await this.userRepository.save(user);
   }
 

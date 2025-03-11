@@ -10,6 +10,7 @@ export const ValidationMessages = {
   CREDENTIALS_INVALID: 'Credencial errada.',
   PROFILE_UPDATE_REQUIRED: 'Você precisa atualizar seu perfil para ter acesso à sua conta!',
   SIGNUP_SUCCESS: 'Cadastro realizado com sucesso!',
+  LOGIN_SUCCESS: 'Login bem-sucedido',
   EMAIL_ALREADY_EXISTS: 'Esse e-mail já existe no sistema.',
   USER_FETCH_ERROR: 'Erro ao buscar usuário com role.',
   PASSWORD_HASH_ERROR: 'Erro ao gerar hash da senha.',
@@ -21,8 +22,12 @@ export const ValidationMessages = {
   RECORD_RESTORE_SUCCESS: 'Registo restaurado com sucesso.',
   FIELD_NOT_FOUND: "O campo '{campo}' não existe na entidade '{entidade}'.",
   INVALID_FOREIGN_KEY: "O valor inserido na coluna '{entidadeNome}' não existe!",
+  INVALID_DATE: "Dados inválidos.",
+  INVALID_CREDENTIAL: "Credenciais inválidas.",
   FOREIGN_KEY_NOT_FOUND: "O {entidadeNome} com ID {id} não existe.",
   ROLE_NOT_FOUND: 'Perfil não encontrado',
   ROLE_ASSIGNED: 'Role ${role.nome} atribuída ao usuário ${user.username}',
   RECORD_HARD_DELETE_SUCCESS_WITH_NAME: 'Registo com {nome} excluído permanentemente.',
+  CANNOT_CHANGE_PROFILE: 'Você não pode editar outro usuário!',
+  USER_CHANGED_SUCCESSFULLY: 'Usuário atualizado com sucesso!'
 };
