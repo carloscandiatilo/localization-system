@@ -9,8 +9,8 @@ export class AuditRepository extends BaseRepository<Audit> {
     super(Audit, dataSource);
   }
 
-  async createAudit(userId: number, action: string, details?: string) {
-    const audit = this.create({ userId, action, details });
+  async createAudit(userId: number, accao: string, detalhes?: string) {
+    const audit = this.create({ userId, accao, detalhes });
     return this.save(audit);
   }
 }

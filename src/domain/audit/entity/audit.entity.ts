@@ -9,10 +9,10 @@ export class Audit {
   userId: number;
 
   @Column()
-  action: string;
+  accao: string;
 
   @Column({ type: 'text', nullable: true })
-  details: string | null;   // ✅ Permitir null explicitamente
+  detalhes: string | null;
 
   @CreateDateColumn()
   timestamp: Date;

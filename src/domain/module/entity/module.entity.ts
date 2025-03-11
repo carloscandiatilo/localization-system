@@ -32,7 +32,6 @@ export class Module {
   @Column({ default: false })
   isDeleted: boolean;
 
-  // 🛠 Campos para auditoria
   @Column({ nullable: true })
   createdBy?: number;
 

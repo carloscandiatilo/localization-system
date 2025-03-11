@@ -1,4 +1,4 @@
-import { IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import { IsOptional, IsNumber, IsBoolean, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class BaseDto {
@@ -16,4 +16,9 @@ export class BaseDto {
 
   @IsOptional()
   updatedAt?: Date;
+}
+
+export class CreateDto extends BaseDto {
+  @IsString()
+  nome: string;
 }

@@ -1,35 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { AuditRepository } from '../repository/audit.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Audit } from '../entity/audit.entity';
+import { LogService } from './log.service';
 
 @Injectable()
 export class AuditService {
-  constructor(private readonly auditRepository: AuditRepository) {}
+  constructor(
+    @InjectRepository(Audit)
+    private readonly auditRepository: Repository<Audit>,
+    private readonly logService: LogService
+  ) {}
 
-  // async log(userId: number, action: string, details?: string) {
-  //   if (!userId) {
-  //     throw new Error('User ID is required for audit logs');
-  //   }
-
-  //   const audit = new Audit();
-  //   audit.userId = userId;       // ✅ Definindo o userId corretamente
-  //   audit.action = action;
-  //   audit.details = details || null;
-
-  //   return this.auditRepository.save(audit);  // ✅ Salvando com o userId
-  // }
-
-  async log(userId: number, action: string, details: string) {
+  async log(userId: number, accao: string, detalhes: string) {
     if (!userId) {
-      throw new Error('User ID is required for audit logs');
+      throw new Error('Obrigatório passar o usuário para o log identificar!');
     }
-    
-    await this.auditRepository.save({
+
+    const auditEntry = this.auditRepository.create({
       userId,
-      action,
-      details,
-      timestamp: new Date(),
+      accao,
+      detalhes,
     });
+    await this.auditRepository.save(auditEntry);
+
+    // Grava no TXT
+    const logMessage = `Usuário ${userId} realizou a ação: ${accao}. Detalhes: ${detalhes}`;
+    this.logService.writeLog(logMessage);
   }
-  
 }

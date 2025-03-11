@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { ModuleModule } from './domain/module/module.module';
 import { RoleModule } from './domain/role/role.module';
-import { CriancaModule } from './domain/crianca/crianca.module';
+import { ProvinciaModule } from './domain/localizacao/provincia/provincia.module';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { CriancaModule } from './domain/crianca/crianca.module';
     UserModule,
     ModuleModule,
     RoleModule,
-    CriancaModule
+    ProvinciaModule
 
   ],
   controllers: [AppController],

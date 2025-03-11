@@ -39,7 +39,7 @@
 //     const item = await this.repository.findById(id);
 //     if (!item) {
 //       const nome = item?.['nome'] ? `'${item['nome']}'` : `ID ${id}`;
-//       throw new HttpException(`Registro com ${nome} não encontrado.`, HttpStatus.NOT_FOUND);
+//       throw new HttpException(`Registo com ${nome} não encontrado.`, HttpStatus.NOT_FOUND);
 //     }
 //     return item;
 //   }
@@ -48,7 +48,7 @@
 //     if (uniqueCondition) {
 //       const existingItem = await this.repository.findByCondition(uniqueCondition);
 //       if (existingItem) {
-//         throw new HttpException('Registro duplicado encontrado.', HttpStatus.BAD_REQUEST);
+//         throw new HttpException('Registo duplicado encontrado.', HttpStatus.BAD_REQUEST);
 //       }
 //     }
 //     await this.validarIdsReferenciados(data);
@@ -61,7 +61,7 @@
 //     if (!updatedItem) {
 //       const item = await this.getById(id).catch(() => null);
 //       const nome = item?.['nome'] ? `'${item['nome']}'` : `ID ${id}`;
-//       throw new HttpException(`Registro com ${nome} não encontrado.`, HttpStatus.NOT_FOUND);
+//       throw new HttpException(`Registo com ${nome} não encontrado.`, HttpStatus.NOT_FOUND);
 //     }
 //     return updatedItem;
 //   }
@@ -73,7 +73,7 @@
 //     }
 //     await this.repository.updateEntity(id, { isDeleted: true } as Partial<T>);
 //     const nome = entity?.['nome'] ? `'${entity['nome']}'` : `ID ${id}`;
-//     return `Registro ${nome} foi excluído com sucesso!`;
+//     return `Registo ${nome} foi excluído com sucesso!`;
 //   }
 
 //   async hardDelete(id: number): Promise<string> {
@@ -81,20 +81,20 @@
 //     const result = await this.repository.deleteEntity(id);
 //     if (result.affected && result.affected > 0) {
 //       const nome = entity?.['nome'] ? `'${entity['nome']}'` : `ID ${id}`;
-//       return `Registro ${nome} foi excluído definitivamente.`;
+//       return `Registo ${nome} foi excluído definitivamente.`;
 //     }
-//     throw new HttpException(`Registro com id ${id} não encontrado para exclusão definitiva.`, HttpStatus.NOT_FOUND);
+//     throw new HttpException(`Registo com id ${id} não encontrado para exclusão definitiva.`, HttpStatus.NOT_FOUND);
 //   }
 
 //   async restore(id: number): Promise<string> {
 //     const entity = await this.repository.findOne({ where: { id: id as any, isDeleted: true } as FindOptionsWhere<T> });
 //     if (!entity) {
-//         throw new HttpException(`Registro com ID ${id} não encontrado para restauração.`, HttpStatus.NOT_FOUND);
+//         throw new HttpException(`Registo com ID ${id} não encontrado para restauração.`, HttpStatus.NOT_FOUND);
 //     }
 //     await this.repository.update(id, { isDeleted: false } as any);
 
 //     const nome = entity['nome'] ? `'${entity['nome']}'` : `ID ${id}`;
-//     return `Registro ${nome} foi restaurado com sucesso.`;
+//     return `Registo ${nome} foi restaurado com sucesso.`;
 // }
 
 

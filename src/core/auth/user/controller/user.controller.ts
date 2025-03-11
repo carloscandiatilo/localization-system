@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, HttpException, HttpStatus, UseGuards, Request, Patch, Param } from '@nestjs/common';
-import { AuthService } from 'src/core/auth/auth.service';
+import { AuthService } from 'src/core/auth/service/auth.service';
 import { UserService } from '../service/user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ValidationMessages } from 'src/shared/messages/validation-messages';

@@ -1,7 +1,7 @@
 import { Repository, EntityTarget, DataSource, ObjectLiteral, FindOptionsWhere, DeleteResult } from 'typeorm';
 
 
-export class BaseRepository<T extends ObjectLiteral & { id: number; isDeleted?: boolean }> extends Repository<T> {
+export class BaseRepository<T extends ObjectLiteral & { id: number; nome?: string; isDeleted?: boolean }> extends Repository<T> {
   constructor(entity: EntityTarget<T>, dataSource: DataSource) {
     super(entity, dataSource.createEntityManager());
   }

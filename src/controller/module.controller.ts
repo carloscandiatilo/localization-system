@@ -1,9 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Delete, Param, NotFoundException, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BaseController } from './base.controller';
 import { Module } from 'src/domain/module/entity/module.entity';
 import { ModuleService } from 'src/domain/module/service/module.service';
-import { CreateModuleDto } from 'src/domain/module/dto/create-module.dto';
-import { UpdateModuleDto } from 'src/domain/module/dto/update-module.dto';
 
 @Controller('modules')
 @UsePipes(new ValidationPipe({
