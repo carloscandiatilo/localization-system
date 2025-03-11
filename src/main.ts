@@ -5,16 +5,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Configuração do Swagger
   const config = new DocumentBuilder()
     .setTitle('Localization System API')
     .setDescription('API para gerenciamento de localização de serviços')
     .setVersion('1.0')
-    .addBearerAuth() // Adiciona autenticação via token JWT
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // Rota para acessar a documentação
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }

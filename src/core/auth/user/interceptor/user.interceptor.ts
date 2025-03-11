@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 export class UserInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
-    // console.log("Usuário autenticado:", request.user);
+    //console.log("Usuário autenticado:", request.user);
 
     if (request.user && request.user.userId) {
       const userId = request.user.userId;
