@@ -34,19 +34,23 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
 
   async create(data: Partial<T>, userId: number): Promise<T> {
     const entity = data as Partial<T & { nome: string }>;
-
+  
     if (!entity.nome) {
       throw new HttpException(ValidationMessages.FIELD_NOT_FOUND, HttpStatus.BAD_REQUEST);
     }
-
+  
     const existingItem = await this.repository.findByCondition({ nome: entity.nome, isDeleted: false } as FindOptionsWhere<T>);
     if (existingItem) {
       throw new HttpException(ValidationMessages.DUPLICATE_RECORD, HttpStatus.BAD_REQUEST);
     }
-
+  
     const created = await this.repository.createEntity(data);
+  
+    await this.auditService.log(userId, 'Criar', `Registro criado: ${JSON.stringify(created)}`);
+  
     return created;
   }
+  
 
   async update(id: number, data: Partial<T>, userId: number): Promise<T> {
     const existingItem = await this.getById(id);

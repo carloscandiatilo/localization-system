@@ -23,7 +23,6 @@ export class AuditService {
       detalhes,
     });
     await this.auditRepository.save(auditEntry);
-
     // Grava no TXT
     const logMessage = `Usuário ${userId} realizou a ação: ${accao}. Detalhes: ${detalhes}`;
     this.logService.writeLog(logMessage);
