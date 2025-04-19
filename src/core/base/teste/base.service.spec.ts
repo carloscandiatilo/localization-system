@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
-import { AuditService } from 'src/domain/audit/service/audit.service';
+import { AuditService } from 'src/core/audit/service/audit.service';
 import { BaseService } from '../service/base.service';
 import { BaseRepository } from '../repository/base.repository';
 

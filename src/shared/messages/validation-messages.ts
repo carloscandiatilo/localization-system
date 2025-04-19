@@ -14,7 +14,7 @@ export const ValidationMessages = {
   EMAIL_ALREADY_EXISTS: 'Esse e-mail já existe no sistema.',
   USER_FETCH_ERROR: 'Erro ao buscar usuário com role.',
   PASSWORD_HASH_ERROR: 'Erro ao gerar hash da senha.',
-  DUPLICATE_RECORD: 'Este Registo já existe no sistema. Por favor, diferencie-o!',
+  DUPLICATE_RECORD: 'Este Registo já existe no sistema!',
   RECORD_NOT_FOUND: 'Registo não encontrado.',
   RECORD_FOUND: 'Registo encontrado.',
   LIST_RETURNED_SUCCESSFULLY: 'Lista retornada com sucesso.',

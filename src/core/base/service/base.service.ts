@@ -2,7 +2,7 @@ import { FindOptionsWhere, DataSource, FindOptionsOrder } from 'typeorm';
 import { BaseRepository } from '../repository/base.repository';
 import { HttpException, HttpStatus, Inject, BadRequestException} from '@nestjs/common';
 import { ValidationMessages } from 'src/shared/messages/validation-messages';
-import { AuditService } from 'src/domain/audit/service/audit.service';
+import { AuditService } from 'src/core/audit/service/audit.service';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 export class BaseService<T extends { id: number; isDeleted?: boolean }> {
   constructor(
@@ -33,13 +33,13 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
   }
 
   async create(data: Partial<T>, userId: number): Promise<T> {
-    const entity = data as Partial<T & { nome: string }>;
+    const entity = data as Partial<T & { name: string }>;
   
-    if (!entity.nome) {
+    if (!entity.name) {
       throw new HttpException(ValidationMessages.FIELD_NOT_FOUND, HttpStatus.BAD_REQUEST);
     }
   
-    const existingItem = await this.repository.findByCondition({ nome: entity.nome, isDeleted: false } as FindOptionsWhere<T>);
+    const existingItem = await this.repository.findByCondition({ name: entity.name, isDeleted: false } as FindOptionsWhere<T>);
     if (existingItem) {
       throw new HttpException(ValidationMessages.DUPLICATE_RECORD, HttpStatus.BAD_REQUEST);
     }
@@ -83,8 +83,8 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
       (updateData as any).updatedBy = userId;
     }
     await this.repository.updateEntity(id, updateData);
-    const nomeOuId = 'nome' in entity && entity.nome ? entity.nome : `ID ${id}`;
-    await this.auditService.log(userId, 'Excluir', `Registo ${nomeOuId} excluído com sucesso!`);
+    const nameOuId = 'name' in entity && entity.name ? entity.name : `ID ${id}`;
+    await this.auditService.log(userId, 'Excluir', `Registo ${nameOuId} excluído com sucesso!`);
   
     return ValidationMessages.RECORD_SOFT_DELETE_SUCCESS;
   }
@@ -94,11 +94,11 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
     const result = await this.repository.deleteEntity(id);
   
     if (result.affected && result.affected > 0) {
-      const nomeOuId: string = typeof entity === 'object' && entity && 'nome' in entity && typeof entity.nome === 'string' ? entity.nome : `ID ${id}`;
+      const nameOuId: string = typeof entity === 'object' && entity && 'name' in entity && typeof entity.name === 'string' ? entity.name : `ID ${id}`;
   
-      await this.auditService.log(userId, 'Excluir Permanentemente', `Registo ${nomeOuId} excluído permanentemente.`);
+      await this.auditService.log(userId, 'Excluir Permanentemente', `Registo ${nameOuId} excluído permanentemente.`);
   
-      return ValidationMessages.RECORD_HARD_DELETE_SUCCESS.replace('{nome}', nomeOuId);
+      return ValidationMessages.RECORD_HARD_DELETE_SUCCESS.replace('{name}', nameOuId);
     }
   
     throw new HttpException(ValidationMessages.RECORD_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -119,9 +119,9 @@ export class BaseService<T extends { id: number; isDeleted?: boolean }> {
     }
     await this.repository.update(id, updateData);
 
-    const nomeOuId: string = typeof entity === 'object' && entity && 'nome' in entity && typeof entity.nome === 'string'? entity.nome: `ID ${id}`;
+    const nameOuId: string = typeof entity === 'object' && entity && 'name' in entity && typeof entity.name === 'string'? entity.name: `ID ${id}`;
 
-    await this.auditService.log(userId, 'Recuperar', `Registo ${nomeOuId} restaurado.`);
+    await this.auditService.log(userId, 'Recuperar', `Registo ${nameOuId} restaurado.`);
 
     return ValidationMessages.RECORD_RESTORE_SUCCESS;
   }

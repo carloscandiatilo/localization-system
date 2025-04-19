@@ -20,5 +20,5 @@ export class BaseDto {
 
 export class CreateDto extends BaseDto {
   @IsString()
-  nome: string;
+  name: string;
 }

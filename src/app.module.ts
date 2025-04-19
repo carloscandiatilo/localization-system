@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './core/auth/user/user.module';
 import typeormConfig from './config/typeorm.config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
-import { ModuleModule } from './domain/module/module.module';
-import { RoleModule } from './domain/role/role.module';
-import { ProvinciaModule } from './domain/localizacao/provincia/provincia.module';
+import { ModuleModule } from './core/modules/module.module';
+import { RoleModule } from './core/roles/role.module';
+import { PermissionModule } from './core/permissions/permission.module';
+import { UserModule } from './core/user/user.module';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { ProvinciaModule } from './domain/localizacao/provincia/provincia.module
     UserModule,
     ModuleModule,
     RoleModule,
-    ProvinciaModule
+    PermissionModule
 
   ],
   controllers: [AppController],
