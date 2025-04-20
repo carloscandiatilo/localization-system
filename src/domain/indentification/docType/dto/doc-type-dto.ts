@@ -5,16 +5,16 @@ import { ValidateDocMask } from 'src/shared/validator/doc-mask.validator';
 import { ValidationMessages } from 'src/shared/messages/validation-messages';
 
 export enum DocTypeEnum {
-  BilheteDeIdentidade = 'Bilhete de Identidade',
-  Passaporte = 'Passaporte',
-  Outro = 'Outro',
+  IdentityCard = 'Bilhete de Identidade',
+  Passaport = 'Passaporte',
+  Other = 'Outro',
 }
 
 export class DocTypeDto extends BaseDto {
   @ApiProperty({
     enum: DocTypeEnum,
     description: 'Tipo de documento (Bilhete de Identidade, Passaporte ou Outro)',
-    example: DocTypeEnum.BilheteDeIdentidade,
+    example: DocTypeEnum.IdentityCard,
   })
   @IsEnum(DocTypeEnum, {
     message: ValidationMessages.DOCUMENT.INVALID_TYPE,
@@ -27,7 +27,7 @@ export class DocTypeDto extends BaseDto {
     examples: {
       'Bilhete de Identidade': { value: '123456789LA123' },
       'Passaporte': { value: 'N1234567' },
-      'Outro': { value: 'QUALQUERCOISA' }
+      'Outro': { value: 'Qualquer Documento Válido.' }
     }
   })
   @IsNotEmpty({ message: ValidationMessages.DOCUMENT.MASK_REQUIRED })
@@ -38,11 +38,11 @@ export class DocTypeDto extends BaseDto {
   @ApiProperty({
     required: false,
     description: 'Descrição do tipo de documento',
-    maxLength: 255,
+    maxLength: 20,
     example: 'Bilhete de Identidade',
   })
-  @MaxLength(255, { message: ValidationMessages.FIELD_NOT_FOUND
-    .replace('{campo}', 'descrição')
-    .replace('{entidade}', 'documento') })
+  @MaxLength(22, { 
+    message: ValidationMessages.DOCUMENT.DESCRIPTION_MAX_LENGTH 
+  })
   description?: string;
 }

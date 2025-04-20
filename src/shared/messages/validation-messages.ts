@@ -49,7 +49,9 @@ export const ValidationMessages = {
     INVALID_TYPE: 'O tipo de documento deve ser: Bilhete de Identidade, Passaporte ou Outro.',
     TYPE_REQUIRED: 'O tipo de documento é obrigatório.',
     MASK_REQUIRED: 'A máscara de preenchimento é obrigatória.',
+    DESCRIPTION_MAX_LENGTH: 'A descrição deve ter no máximo 20 caracteres.',
     MASK_INVALID_STRING: 'A máscara de preenchimento deve ser uma string.',
+    
     
     BI: {
       INVALID_MASK: 'Para Bilhete de Identidade, a máscara deve ter 9 números + 2 letras + 3 números (ex: 123456789LA123)',
@@ -64,6 +66,7 @@ export const ValidationMessages = {
     OTHER: {
       INVALID_MASK: 'Para outros documentos, a máscara deve ter no máximo 20 caracteres',
       INVALID_VALUE: 'Para documentos do tipo "Outro", o valor deve ter no máximo 20 caracteres.'
+     
     }
   },
   
