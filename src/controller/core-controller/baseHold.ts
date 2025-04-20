@@ -1,62 +1,21 @@
 import { 
-  Controller, Get, Post, Param, Body, Put, Delete, Query, HttpCode, 
-  HttpStatus, UseGuards, Logger, NotFoundException, Request, 
-  UseInterceptors, Req, UnauthorizedException, BadRequestException 
+  Controller, Get, Post, Param, Body, Put, Delete, Query, HttpCode, HttpStatus, UseGuards, Logger, NotFoundException, Request, UseInterceptors, Req, UnauthorizedException
 } from '@nestjs/common';
 import { BaseService } from 'src/core/base/service/base.service';
 import { JwtAuthGuard } from 'src/core/auth/guard/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ValidationMessages } from 'src/shared/messages/validation-messages';
 import { UserInterceptor } from 'src/core/user/interceptor/user.interceptor';
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
-import { ValidationError } from 'class-validator/types/validation/ValidationError';
 
 @ApiTags('Base')
 @ApiBearerAuth()
 @UseInterceptors(UserInterceptor)
 @Controller('base')
 @UseGuards(JwtAuthGuard)
-export class BaseController<T extends { id: number; isDeleted?: boolean }, DTO extends object = object> {
+export class BaseController<T extends { id: number; isDeleted?: boolean }> {
   private readonly logger = new Logger(BaseController.name);
-  private dtoClass: new () => DTO;
 
-  constructor(
-    private readonly service: BaseService<T>,
-    dtoClass?: new () => DTO
-  ) {
-    if (dtoClass) {
-      this.dtoClass = dtoClass;
-    }
-  }
-
-  private async validateDto(data: any): Promise<void> {
-    if (!this.dtoClass) return;
-
-    const dtoInstance = plainToInstance(this.dtoClass, data);
-    const errors = await validate(dtoInstance as object);
-    
-    if (errors.length > 0) {
-      const errorMessages = this.flattenValidationErrors(errors);
-      throw new BadRequestException(errorMessages);
-    }
-  }
-
-  private flattenValidationErrors(errors: ValidationError[]): string[] {
-    const errorMessages: string[] = [];
-    
-    errors.forEach(error => {
-      if (error.constraints) {
-        errorMessages.push(...Object.values(error.constraints));
-      }
-      
-      if (error.children && error.children.length > 0) {
-        errorMessages.push(...this.flattenValidationErrors(error.children));
-      }
-    });
-    
-    return errorMessages;
-  }
+  constructor(private readonly service: BaseService<T>) {}
 
   @Get()
   @ApiOperation({ summary: 'Lista todos os registros' })
@@ -109,9 +68,6 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }, DTO e
   async create(@Body() data: Partial<T>, @Request() req) {
     const userId = req.user?.userId;
     if (!userId) throw new Error(ValidationMessages.USER_NOT_AUTHENTICATED);
-    
-    await this.validateDto(data);
-    
     return this.service.create(data, userId);
   }
   
@@ -121,9 +77,6 @@ export class BaseController<T extends { id: number; isDeleted?: boolean }, DTO e
   @ApiResponse({ status: 404, description: ValidationMessages.RECORD_NOT_FOUND })
   async update(@Param('id') id: number, @Body() data: Partial<T>, @Request() req) {
     const userId = req.user.userId;
-    
-    await this.validateDto(data);
-    
     const result = await this.service.update(id, data, userId);
     if (typeof result === 'string') {
       throw new NotFoundException(result);

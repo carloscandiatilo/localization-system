@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { BaseService } from 'src/core/base/service/base.service';
 import { DataSource } from 'typeorm';
 import { AuditService } from 'src/core/audit/service/audit.service';
-import { Permission } from '../entity/permission.entity';
-import { PermissionRepository } from '../repository/permission.repository';
+import { DocType } from '../entity/doc-type.entity';
+import { DocTypeRepository } from '../repository/doc-type.repository';
 
 @Injectable()
-export class PermissionService extends BaseService<Permission> {
+export class DocTypeService extends BaseService<DocType> {
   constructor(
-    private readonly permissionRepository: PermissionRepository,
+    private readonly docTypeRepository: DocTypeRepository,
     protected readonly auditService: AuditService,
     protected readonly dataSource: DataSource,
   ) {
-    super(permissionRepository, auditService, dataSource);
+    super(docTypeRepository, auditService, dataSource);
   }
 }

@@ -7,6 +7,7 @@ import { ModuleModule } from './core/modules/module.module';
 import { RoleModule } from './core/roles/role.module';
 import { PermissionModule } from './core/permissions/permission.module';
 import { UserModule } from './core/user/user.module';
+import { IdentificationModule } from './domain/indentification/indentification.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { UserModule } from './core/user/user.module';
     UserModule,
     ModuleModule,
     RoleModule,
-    PermissionModule
+    PermissionModule,
+    IdentificationModule
 
   ],
   controllers: [AppController],
