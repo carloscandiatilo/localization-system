@@ -1,5 +1,5 @@
 import { User } from 'src/core/user/entity/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('roles')
 export class Role {
@@ -17,4 +17,17 @@ export class Role {
 
   @Column({ name: 'is_deleted', default: false })
   isDeleted: boolean;
+
+  @Column({ nullable: true })
+  createdBy?: number;
+
+  @Column({ nullable: true })
+  updatedBy?: number;
+
+  @CreateDateColumn({ type: 'timestamp', precision: 6 })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', precision: 6 })
+  updatedAt: Date;
+
 }
